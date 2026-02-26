@@ -1,5 +1,23 @@
 # Wokwi Comms Periph
 
+## Overview - what each tool is used for
+
+- **PlatformIO** (firmware build and hardware workflow)
+  - Creates and manages MCU projects.
+  - Compiles source code into firmware artifacts (for example, `.elf` and `.bin`).
+  - Uploads firmware to real boards and provides serial/debug tooling.
+  - By itself, PlatformIO does not simulate peripherals.
+
+- **Wokwi** (simulation workflow)
+  - Simulates supported boards and peripherals using `diagram.json`.
+  - Runs firmware built by PlatformIO so you can test behavior without wiring physical hardware.
+  - Uses `wokwi.toml` to point to your compiled firmware artifact.
+
+- **How they fit together**
+  - Write firmware in PlatformIO.
+  - Build once in PlatformIO to generate firmware output files.
+  - Run that firmware in Wokwi for virtual board/peripheral testing.
+
 ## End-to-end setup (PlatformIO + Wokwi)
 
 ### Step 1 - Install required extensions
@@ -58,6 +76,10 @@
 
 ### Step 6 - Add Wokwi project files
 
+> **Why Steps 4 and 5 are required first:**  
+> Step 4 gives PlatformIO firmware code to compile, and Step 5 generates `.pio/build/<environment>/firmware.elf`.  
+> Step 6 references that file path in `wokwi.toml`, so it must exist first.
+
 1. In the project root, create `diagram.json`.
    - Define your board and parts.
    - You can copy a starter diagram from a new Wokwi online project for your board type.
@@ -73,6 +95,15 @@ elf = '.pio/build/<environment>/firmware.elf'
 
 4. Keep paths portable.
    - Use forward slashes (`/`) on all operating systems.
+
+**Where to get fields and values**
+
+- **wokwi.toml**
+  - Use the `[wokwi]` section with `version`, `firmware`, and `elf` as in the example above.
+  - Replace `<environment>` with your PlatformIO environment name from `platformio.ini` (e.g. the `[env:adafruit_feather_esp32s3]` block → use `adafruit_feather_esp32s3`). The path must point to the `.elf` file produced by **PlatformIO: Build** in Step 5.
+- **diagram.json**
+  - **Structure:** `version`, `editor` (use `"wokwi"`), `parts`, and `connections`. See [Wokwi diagram format](https://docs.wokwi.com/diagram-format).
+  - **Board and parts types:** Create a new project at [wokwi.com](https://wokwi.com) for your MCU (e.g. ESP32-S3), add the board and any peripherals, then copy the generated `diagram.json` into your project root. You can also look up part IDs in the [Wokwi parts list](https://docs.wokwi.com/parts).
 
 ### Step 7 - Start and verify simulation
 
