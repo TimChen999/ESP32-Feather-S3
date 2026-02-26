@@ -5,5 +5,11 @@
   "parts": [
     { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 0, "left": 0, "attrs": {} }
   ],
-  "connections": []
+  "connections": [
+    [ "esp:17", "esp:9",  "green",  [] ],
+    [ "esp:10", "esp:18", "blue",   [] ],
+    [ "esp:16", "esp:11", "orange", [] ],
+    [ "esp:12", "esp:15", "purple", [] ]
+  ],
+  "serialMonitor": { "display": "auto" }
 }
